@@ -1,6 +1,7 @@
 package com.example.learning
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,6 +18,8 @@ import com.example.learning.ui.utils.ColumnContainerFullSize
 import com.example.learning.ui.utils.getColumnContainer
 
 import androidx.compose.material3.*
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 
 
 class MainActivity : ComponentActivity() {
@@ -38,6 +41,14 @@ class MainActivity : ComponentActivity() {
                         Text("QQPR 4")
                         Text("QQPR 5")
 
+                        val isChecked = remember { mutableStateOf(false) }
+                        Switch(
+                            checked = isChecked.value,
+                            onCheckedChange = {
+                                isChecked.value = it
+                                Log.d("Greeting", "Switch toggled: $it")
+                            }
+                        )
                     }
                 }
             }
