@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +84,10 @@ class MainActivity : ComponentActivity() {
 
                         Box {
                             OutlinedButton(onClick = { expanded = true }) {
-                                Text(selectedOption)
+                                Text(
+                                    text = selectedOption,
+                                    color = Color.Black // ✅ 強制文字顯示為黑色
+                                )
                             }
 
                             DropdownMenu(
@@ -92,11 +96,16 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 options.forEach { option ->
                                     DropdownMenuItem(
-                                        text = { Text(option) },
                                         onClick = {
                                             selectedOption = option
                                             expanded = false
                                             Log.d("Greeting", "Theme selected: $option")
+                                        },
+                                        text = {
+                                            Text(
+                                                text = option,
+                                                color = MaterialTheme.colorScheme.onSurface // 強制指定字體顏色
+                                            )
                                         }
                                     )
                                 }
