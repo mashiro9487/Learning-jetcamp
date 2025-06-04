@@ -1,16 +1,14 @@
 package com.example.learning.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
+
+/**
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
@@ -53,6 +51,45 @@ fun LearningTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        content = content
+    )
+}
+ */
+
+private val BlockDarkColorScheme = darkColorScheme(
+    primary = Color(0xFF00FFFF),          // Cyan
+    onPrimary = Color.Black,
+    secondary = Color(0xFF1DE9B6),        // Teal
+    onSecondary = Color.Black,
+    background = Color(0xFF0A0E23),       // Deep navy blue
+    onBackground = Color.White,
+    surface = Color(0xFF121212),
+    onSurface = Color.White,
+    error = Color(0xFFFF5252)
+)
+
+private val BlockLightColorScheme = lightColorScheme(
+    primary = Color(0xFF00B0FF),          // Light Blue
+    onPrimary = Color.White,
+    secondary = Color(0xFF1DE9B6),
+    onSecondary = Color.Black,
+    background = Color(0xFFF0F4F8),
+    onBackground = Color.Black,
+    surface = Color.White,
+    onSurface = Color.Black,
+    error = Color(0xFFD32F2F)
+)
+
+@Composable
+fun BlockchainAppTheme(
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (useDarkTheme) BlockDarkColorScheme else BlockLightColorScheme
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = BlockTypography, // 可後續自訂字型風格
         content = content
     )
 }
