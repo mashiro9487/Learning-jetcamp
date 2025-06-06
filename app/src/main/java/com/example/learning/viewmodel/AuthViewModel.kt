@@ -8,7 +8,8 @@ import kotlinx.coroutines.launch
 
 data class AuthUiState(
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isLoggedIn: Boolean = false
 )
 
 class AuthViewModel : ViewModel() {
@@ -22,7 +23,7 @@ class AuthViewModel : ViewModel() {
 
             // 模擬登入邏輯（你可以呼叫 repository）
             if (email == "test@example.com" && password == "1234") {
-                _uiState.value = AuthUiState()  // 登入成功，清除錯誤
+                _uiState.value = AuthUiState(isLoggedIn = true)  // 登入成功，清除錯誤
             } else {
                 _uiState.value = AuthUiState(error = "Invalid credentials")
             }
