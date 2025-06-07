@@ -21,7 +21,6 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = AuthUiState(isLoading = true)
 
-            // 模擬登入邏輯（你可以呼叫 repository）
             if (email == "test@example.com" && password == "1234") {
                 _uiState.value = AuthUiState(isLoggedIn = true)  // 登入成功，清除錯誤
             } else {
