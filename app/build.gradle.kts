@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.apollo3)
 }
 
 android {
@@ -39,8 +40,15 @@ android {
     }
 }
 
-dependencies {
+apollo {
+    service("service") {
+        packageName.set("com.example.learning")
+        schemaFile.set(file("src/main/graphql/schema.json"))
+    }
+}
 
+dependencies {
+    implementation(libs.apollo.runtime)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
