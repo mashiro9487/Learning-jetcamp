@@ -2,6 +2,11 @@ package com.example.learning.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo3.ApolloClient
+/* cause of buildConfig = true in build.gradle*/
+import com.example.learning.BuildConfig
+import com.example.learning.LoginMutation
+import com.example.learning.RegisterMutation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,20 +18,49 @@ data class AuthUiState(
 )
 
 class AuthViewModel : ViewModel() {
-
+    // 使用 Apollo Client 連接到 GraphQL API
+    private val apolloClient = ApolloClient.Builder()
+        .serverUrl(BuildConfig.GRAPHQL_SERVER_URL)
+        .build()
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            _uiState.value = AuthUiState(isLoading = true)
+            try {
+                _uiState.value = AuthUiState(isLoading = true)
 
-            // 模擬登入邏輯（你可以呼叫 repository）
-            if (email == "test@example.com" && password == "1234") {
-                _uiState.value = AuthUiState(isLoggedIn = true)  // 登入成功，清除錯誤
-            } else {
-                _uiState.value = AuthUiState(error = "Invalid credentials")
+                val response = apolloClient.mutation(LoginMutation(email, password)).execute()
+                val message = response.data?.login
+
+                if (message == "Login successful") {
+                    _uiState.value = AuthUiState(isLoggedIn = true)
+                } else {
+                    _uiState.value = AuthUiState(error = message)
+                }
+
+            } catch (e: Exception) {
+                _uiState.value = AuthUiState(error = "Network error: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun register(email: String, password: String) {
+        viewModelScope.launch {
+            _uiState.value = AuthUiState(isLoading = true)
+            try {
+                val response = apolloClient.mutation(RegisterMutation(email, password)).execute()
+                val result = response.data?.register
+
+                if (result?.success == true) {
+                    _uiState.value = AuthUiState(isLoggedIn = true)
+                } else {
+                    _uiState.value = AuthUiState(error = result?.message ?: "Registration failed")
+                }
+            } catch (e: Exception) {
+                _uiState.value = AuthUiState(error = "Network error: ${e.message}")
             }
         }
     }
 }
+

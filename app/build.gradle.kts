@@ -2,7 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.apollo3)
 }
+
+val serverUrl: String =
+    project.findProperty("GRAPHQL_SERVER_URL") as? String ?: "http://default.url/graphql/"
 
 android {
     namespace = "com.example.learning"
@@ -16,6 +20,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GRAPHQL_SERVER_URL", "\"$serverUrl\"")
     }
 
     buildTypes {
@@ -35,12 +41,21 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        // Enable generation of the BuildConfig class by the Android Gradle plugin
+        buildConfig = true
         compose = true
     }
 }
 
-dependencies {
+apollo {
+    service("service") {
+        packageName.set("com.example.learning")
+        schemaFile.set(file("src/main/graphql/schema.json"))
+    }
+}
 
+dependencies {
+    implementation(libs.apollo.runtime)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
