@@ -3,7 +3,10 @@ package com.example.learning.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo3.ApolloClient
+/* cause of buildConfig = true in build.gradle*/
+import com.example.learning.BuildConfig
 import com.example.learning.LoginMutation
+import com.example.learning.RegisterMutation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +20,7 @@ data class AuthUiState(
 class AuthViewModel : ViewModel() {
     // 使用 Apollo Client 連接到 GraphQL API
     private val apolloClient = ApolloClient.Builder()
-        .serverUrl("https://your-graphql-server.com/graphql") // 換成你的 GraphQL API URL
+        .serverUrl(BuildConfig.GRAPHQL_SERVER_URL)
         .build()
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState
@@ -37,7 +40,7 @@ class AuthViewModel : ViewModel() {
                 }
 
             } catch (e: Exception) {
-                _uiState.value = AuthUiState(error = "Network error")
+                _uiState.value = AuthUiState(error = "Network error: ${e.localizedMessage}")
             }
         }
     }
@@ -45,11 +48,17 @@ class AuthViewModel : ViewModel() {
     fun register(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState(isLoading = true)
+            try {
+                val response = apolloClient.mutation(RegisterMutation(email, password)).execute()
+                val result = response.data?.register
 
-            if (email.isNotBlank() && password.length >= 4) {
-                _uiState.value = AuthUiState(isLoggedIn = true)
-            } else {
-                _uiState.value = AuthUiState(error = "Invalid email or password")
+                if (result?.success == true) {
+                    _uiState.value = AuthUiState(isLoggedIn = true)
+                } else {
+                    _uiState.value = AuthUiState(error = result?.message ?: "Registration failed")
+                }
+            } catch (e: Exception) {
+                _uiState.value = AuthUiState(error = "Network error: ${e.message}")
             }
         }
     }

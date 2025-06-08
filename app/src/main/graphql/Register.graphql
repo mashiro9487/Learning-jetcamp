@@ -1,0 +1,7 @@
+# noinspection GraphQLUnresolvedReference
+mutation Register($email: String!, $password: String!) {
+  register(email: $email, password: $password) {
+    success
+    message
+  }
+}

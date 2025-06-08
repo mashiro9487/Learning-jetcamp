@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.apollo3)
 }
 
+val serverUrl: String =
+    project.findProperty("GRAPHQL_SERVER_URL") as? String ?: "http://default.url/graphql/"
+
 android {
     namespace = "com.example.learning"
     compileSdk = 35
@@ -17,6 +20,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GRAPHQL_SERVER_URL", "\"$serverUrl\"")
     }
 
     buildTypes {
@@ -36,6 +41,8 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        // Enable generation of the BuildConfig class by the Android Gradle plugin
+        buildConfig = true
         compose = true
     }
 }
